@@ -1,4 +1,2 @@
-cp -rf /Volumes/os/ /User/gattaca/Sos
-git add .
+cp -rf * /User/gattaca/Sos
 git commit -m $1
-git push
