@@ -32,11 +32,57 @@ entry:
 		MOV		AX,0			; レジスタ初期化
 		MOV		SS,AX
 		MOV		SP,0x7c00
+
 		MOV		DS,AX
 		MOV		CX,AX
+		MOV		AX,0x0820
 		MOV		ES,AX
+		MOV		CL,1
+read:
+		ADD		CL,1
+		CMP		CL,18
+		JE		readfinish
+		MOV		CH,0
+		MOV		DH,0
+		;MOV		CL,2
+
+beginmove:
+		MOV		AH,0x02
+		MOV		AL,1
+		MOV		BX,0
+		MOV 	DL,0x00
+		JMP		changeES
+endmove:
+
+		INT		0x13
+		JC		error
+		JMP		read
+changeES:
+		MOV		AX,ES
+		ADD		AX,0x020
+		MOV		ES,AX
+		MOV		AH,0x02
+		MOV		AL,1
+		CMP		CL,18
+		JE		readfinish
+		JMP		endmove;
+
+readfinish:
 		MOV		SI,msg
+		JMP		putloop
+error:
+		MOV		SI,msg
+		MOV		AL,[SI]
+		ADD		SI,1			; SIに1を足す
+		CMP		AL,0
+		JE		entry	
+		MOV		AH,0x0e			; 一文字表示ファンクション
+		MOV		BX,15			; カラーコード
+		INT		0x10			; ビデオBIOS呼び出し
+		JMP		putloop
+
 putloop:
+
 		MOV		AL,[SI]
 		ADD		SI,1			; SIに1を足す
 		CMP		AL,0
@@ -58,7 +104,7 @@ fin:
 
 msg:
 		DB		0x0a, 0x0a		; 改行を2つ
-		DB		"hello, world"
+		DB		"error!"
 		DB		0x0a			; 改行
 		DB		0
 
