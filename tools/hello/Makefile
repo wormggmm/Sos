@@ -70,4 +70,12 @@ run:
 	$(MAKE) -C $(TOOLSPATH)qemu
 
 clean:
-	$(DEL) *.bin *.lst *.img *.sys
+		-$(DEL) *.bin
+	-$(DEL) *.lst
+	-$(DEL) *.gas
+	-$(DEL) *.obj
+	-$(DEL) bootpack.nas
+	-$(DEL) bootpack.map
+	-$(DEL) bootpack.bim
+	-$(DEL) bootpack.hrb
+	-$(DEL) haribote.sys
