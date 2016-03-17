@@ -15,24 +15,30 @@ COPY     = copy
 DEL      = del
 
 
+haribote.sys: haribote.nas Makefile
+	$(NASK) haribote.nas haribote.sys haribote.lst
+
+
 ipl.bin:ipl.nas Makefile
 	$(NASK)  ipl.nas ipl.bin ipl.lst
 
 
-helloos.img: ipl.bin Makefile
-	$(EDIMG) imgin:$(TOOLSPATH)fdimg0at.tek \
-	wbinimg src:ipl.bin len:512 from:0 to:0 imgout:helloos.img
+haribote.img: ipl.bin haribote.sys Makefile
+	$(EDIMG)   imgin:$(TOOLSPATH)fdimg0at.tek \
+		wbinimg src:ipl.bin len:512 from:0 to:0 \
+		copy from:haribote.sys to:@: \
+		imgout:haribote.img
 
 asm:
 	$(MAKE) -r ipl.bin
 
 img:
-	$(MAKE) -r helloos.img
+	$(MAKE) -r haribote.img
 
 run:
 	$(MAKE) img
-	$(COPY) helloos.img $(_TOOLSPATH)qemu\fdimage0.bin
+	$(COPY) haribote.img $(_TOOLSPATH)qemu\fdimage0.bin
 	$(MAKE) -C $(TOOLSPATH)qemu
 
 clean:
-	$(DEL) *.bin *.lst *.img
+	$(DEL) *.bin *.lst *.img *.sys
