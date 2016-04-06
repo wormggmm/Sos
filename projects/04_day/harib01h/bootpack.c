@@ -3,6 +3,7 @@ void io_cli(void);
 void io_out8(int port, int data);
 int io_load_eflags(void);
 void io_store_eflags(int eflags);
+void writeChar(void);
 
 void init_palette(void);
 void set_palette(int start, int end, unsigned char *rgb);
@@ -52,6 +53,7 @@ void HariMain(void)
 	boxfill8(vram, xsize, COL8_FFFFFF, xsize - 47, ysize -  3, xsize -  4, ysize -  3);
 	boxfill8(vram, xsize, COL8_FFFFFF, xsize -  3, ysize - 24, xsize -  3, ysize -  3);
 
+	writeChar();
 	for (;;) {
 		io_hlt();
 	}
@@ -78,6 +80,7 @@ void init_palette(void)
 		0x84, 0x84, 0x84	/* 15:暗い灰色 */
 	};
 	set_palette(0, 15, table_rgb);
+
 	return;
 
 	/* static char 命令は、データにしか使えないけどDB命令相当 */
@@ -108,3 +111,41 @@ void boxfill8(unsigned char *vram, int xsize, unsigned char c, int x0, int y0, i
 	}
 	return;
 }
+
+
+void writeChar()
+{
+
+	char a[16] = [
+		0x00,
+		0x18,
+		0x18,
+		0x18,
+		0x18,
+		0x24,
+		0x24,
+		0x24,
+		0x24,
+		0x7d,
+		0x82,
+		0x82,
+		0x82,
+		0xd7,
+		0x00,
+		0x00,
+		0x00
+		];
+
+	char *vram = null;
+	vram = (char *) 0xa0000;
+
+	int maxLineCharCount = 320/8;
+
+	for(int i = 0; i < 16; i++)
+	{
+		io_out8(0xa0000 + 320*i, a[i]);
+	}
+	return;
+}
+
+
